@@ -173,16 +173,16 @@ export default defineComponent({
         }
 
         // Load cocoSsd model
-        init().then(() => {
-            isLoading.value = false
-            play()
+        // init().then(() => {
+        //     isLoading.value = false
+        //     play()
 
-            const patchesEl = document.querySelectorAll('.patch')
-            for (const div of patchesEl) {
-                div.children[0].children[0].style.transform = 'fill 1s ease'
-                div.children[0].children[0].style.fill = '#111827'
-            }
-        })
+        //     const patchesEl = document.querySelectorAll('.patch')
+        //     for (const div of patchesEl) {
+        //         div.children[0].children[0].style.transform = 'fill 1s ease'
+        //         div.children[0].children[0].style.fill = '#111827'
+        //     }
+        // })
 
         const screenWidth = computed(() => screen.width - 20)
 

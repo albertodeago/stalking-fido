@@ -12,14 +12,6 @@ const init = () => {
 
     return initPromise
 }
-// console.log('Loading TF model')
-// const tfModelPromise = cocoSsd.load()
-// tfModelPromise.then(() => {
-//     console.log('Model loaded')
-//     isLoading.value = false
-
-//     play()
-// })
 
 /**
  * Get predictions of an image
