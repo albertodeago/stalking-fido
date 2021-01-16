@@ -1,0 +1,28 @@
+{
+  "name": "stalking-fido",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "dev-https": "vite --https",
+    "build": "cross-env NODE_ENV=production vite build"
+  },
+  "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.2.0",
+    "@tailwindcss/forms": "^0.2.1",
+    "@tailwindcss/typography": "^0.3.1",
+    "snapsvg": "^0.5.1",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
+    "vue": "^3.0.4",
+    "vue-router": "^4.0.1",
+    "vue-toastification": "^2.0.0-rc.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^9.8.6",
+    "postcss": "^7.0.35",
+    "@vue/compiler-sfc": "^3.0.4",
+    "cross-env": "^7.0.3",
+    "vite": "^1.0.0-rc.13",
+    "less": "4.0.0"
+  }
+}
