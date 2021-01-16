@@ -68,7 +68,8 @@ import { appState, screen } from '/@/shared'
 import Loader from "./Loader.vue"
 import { getFirstVideoInputDevice, getVideoPermissions } from './device'
 import { takeScreen } from './media'
-import { init, getPredictions } from './ml'
+// import { init, getPredictions } from './ml'
+import { init, getPredictions } from './tfWorker'
 
 export default defineComponent({
     name: 'Video',
@@ -172,17 +173,18 @@ export default defineComponent({
             }
         }
 
-        // Load cocoSsd model
-        // init().then(() => {
-        //     isLoading.value = false
-        //     play()
+        // Load cocoSsd model (in webworker)
+        init().then(() => {
+            isLoading.value = false
+            play()
 
-        //     const patchesEl = document.querySelectorAll('.patch')
-        //     for (const div of patchesEl) {
-        //         div.children[0].children[0].style.transform = 'fill 1s ease'
-        //         div.children[0].children[0].style.fill = '#111827'
-        //     }
-        // })
+            const patchesEl = document.querySelectorAll('.patch')
+            for (const div of patchesEl) {
+                div.children[0].children[0].style.transform = 'fill 1s ease'
+                div.children[0].children[0].style.fill = '#111827'
+            }
+        })
+
 
         const screenWidth = computed(() => screen.width - 20)
 

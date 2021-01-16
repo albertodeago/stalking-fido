@@ -22,7 +22,7 @@ const appState = reactive<AppState>({
 const initState = () => {
     const lang = navigator.language
 
-    appState.target = 'tv',
+    appState.target = 'dog',
     appState.checkInterval = 3,
     appState.stalkingInterval = 1,
     appState.message = ''

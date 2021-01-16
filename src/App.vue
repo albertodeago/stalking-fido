@@ -1,7 +1,6 @@
 <template>
     <main class="relative">
         <div class="background absolute inset-0 bg-yellow-200 overflow-hidden" ref="background"></div>
-        <img src="/dog.jpg" class="relative z-10" ref="image">
         <router-view v-slot="{ Component }">
             <transition name="fade">
                 <component :is="Component" />
@@ -79,75 +78,6 @@ export default defineComponent({
                     background.value.appendChild(getPatch(x, y));
                 }
             }
-
-
-            const worker_function = () => {
-                importScripts('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs')
-                importScripts('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd')
-
-                let initPromise
-
-                const init = () => {
-                    if (!initPromise) {
-                        console.log('worker: Loading TF model')
-                        initPromise = cocoSsd.load()
-                        initPromise.then(() => {
-                            console.log('worker: Model loaded')
-                        })
-                    }
-
-                    return initPromise
-                }
-
-                /**
-                 * Get predictions of an image
-                 * N.B init method needs to be called (at least once) before this one
-                 */
-                const getPredictions = async (image: HTMLImageElement) => {
-                    const model = await initPromise
-                    const predictions = await model.detect(image)
-                    if (predictions.length === 0) {
-                        console.log('Nothing interesting found')
-                    }
-                    predictions.forEach(prediction => console.log(`Predictions: ${prediction.class} -> ${prediction.score * 100}`))
-
-                    return predictions
-                }
-
-                onmessage = msg => {
-                    console.log('Msg from main: ', msg.data.text)
-                    postMessage({text: 'hello'})
-
-                    if (msg.data.text === 'init') {
-                        init().then(() => postMessage({text: 'init-complete'}))
-                    } else if (msg.data.text === 'predict') {
-                        getPredictions(msg.data.image).then(prediction => postMessage({text: 'prediction-res', prediction}))
-                    }
-                }
-            }
-            const worker = new Worker(URL.createObjectURL(new Blob(
-                ['(' + worker_function.toString() + ')()'], 
-                { type: 'text/javascript' }
-            )))
-            worker.onmessage = msg => {
-                console.log('Msg from Worker: ', msg.data.text)
-                if (msg.data.text === 'init-complete') {
-                    
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    const img = image.value
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    context.drawImage(img, 0, 0 );
-                    const imageData = context.getImageData(0, 0, img.width, img.height);
-
-                    worker.postMessage({text: 'predict', image: imageData})
-                } else if (msg.data.text === 'prediction-res') {
-                    console.log("Worker gave predictions: ", msg.data.prediction)
-                }
-            }
-            worker.postMessage({text: 'init'})
-
         })
 
         return {
