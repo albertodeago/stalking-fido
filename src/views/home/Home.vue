@@ -28,7 +28,7 @@ export default defineComponent({
     setup() {
         if (!('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)) {
             console.error("Device does not support this app")
-            // TODO: show an error page...
+            alert("This device does not support this app")
         }
     }
 })

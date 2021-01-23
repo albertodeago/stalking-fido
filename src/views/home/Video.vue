@@ -68,7 +68,6 @@ import { appState, screen } from '/@/shared'
 import Loader from "./Loader.vue"
 import { getFirstVideoInputDevice, getVideoPermissions } from './device'
 import { takeScreen } from './media'
-// import { init, getPredictions } from './ml'
 import { init, getPredictions } from './tfWorker'
 
 export default defineComponent({
@@ -87,8 +86,8 @@ export default defineComponent({
         const images = ref([])
         const isLoading = ref(true)
         const isStreamPlaying = ref(false)
-        let intervalId = null
         const selectedImage = ref(null)
+        let intervalId = null
 
         onMounted(() => {
             container.value.style.minHeight = `${screen.height}px`
@@ -123,10 +122,7 @@ export default defineComponent({
                 const src = takeScreen(video.value, canvas.value)
                 screenImg.value.src = src
 
-                setTimeout(() => {}, 100)
-
                 const predictions = await getPredictions(screenImg.value)
-                const isThereADog = predictions => predictions.find(p => p.class === appState.target && (p.score * 100) > 50)
                 const predictionsClasses = predictions.map(p => (p.score * 100 > 50) ? p.class : undefined).filter(Boolean)
 
                 const toastMsg = predictionsClasses.length 
@@ -138,6 +134,8 @@ export default defineComponent({
                     hideProgressBar: true,
                     icon: false
                 })
+
+                const isThereADog = predictions => predictions.find(p => p.class === appState.target && (p.score * 100) > 50)
 
                 if (isThereADog(predictions)) {
                     const alertWithSound = (txt) => {
