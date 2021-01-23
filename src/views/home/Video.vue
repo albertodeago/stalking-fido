@@ -118,6 +118,7 @@ export default defineComponent({
         const stalkingTime = appState.stalkingInterval * 1000
 
         const startStalking = (time) => {
+            console.log("Start stalking")
             intervalId = setTimeout(async () => {
                 const src = takeScreen(video.value, canvas.value)
                 screenImg.value.src = src
