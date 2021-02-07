@@ -62,9 +62,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue'
+import { defineComponent, ref, computed, onMounted, watchEffect } from 'vue'
 import { useToast } from 'vue-toastification'
-import { appState, screen } from '/@/shared'
+import { appState, screen, isCookiesAccepted } from '/@/shared'
 import Loader from "./Loader.vue"
 import { getFirstVideoInputDevice, getVideoPermissions } from './device'
 import { takeScreen } from './media'
@@ -79,16 +79,17 @@ export default defineComponent({
 
     async setup() {
         const toast = useToast()
-        const container = ref(null)
-        const video = ref(null)
-        const canvas = ref(null)
-        const screenImg = ref(null)
-        const images = ref([])
-        const isLoading = ref(true)
-        const isStreamPlaying = ref(false)
-        const selectedImage = ref(null)
+        const container = ref<HTMLElement>(null)
+        const video = ref<HTMLVideoElement>(null)
+        const canvas = ref<HTMLCanvasElement>(null)
+        const screenImg = ref<HTMLImageElement>(null)
+        const images = ref<Array<{src: string}>>([])
+        const isLoadingModel = ref<boolean>(true)
+        const isLoading = computed(() => isLoadingModel.value || !isCookiesAccepted.value)
+        const isStreamPlaying = ref<boolean>(false)
+        const selectedImage = ref<string>(null)
         let intervalId = null
-
+console.log(isCookiesAccepted)
         onMounted(() => {
             container.value.style.minHeight = `${screen.height}px`
         })
@@ -125,6 +126,8 @@ export default defineComponent({
                 const predictions = await getPredictions(screenImg.value)
                 const predictionsClasses = predictions.map(p => (p.score * 100 > 50) ? p.class : undefined).filter(Boolean)
 
+                const isThereADog = predictions => predictions.find(p => p.class === appState.target && (p.score * 100) > 50)
+
                 const toastMsg = predictionsClasses.length 
                     ? `Items detected: ${predictionsClasses.join(', ')}`
                     : 'Nothing detected'
@@ -134,8 +137,6 @@ export default defineComponent({
                     hideProgressBar: true,
                     icon: false
                 })
-
-                const isThereADog = predictions => predictions.find(p => p.class === appState.target && (p.score * 100) > 50)
 
                 if (isThereADog(predictions)) {
                     const alertWithSound = (txt) => {
@@ -174,14 +175,17 @@ export default defineComponent({
 
         // Load cocoSsd model (in webworker)
         init().then(() => {
-            isLoading.value = false
-            play()
-
-            const patchesEl = document.querySelectorAll('.patch')
-            for (const div of patchesEl) {
-                div.children[0].children[0].style.transform = 'fill 1s ease'
-                div.children[0].children[0].style.fill = '#111827'
-            }
+            isLoadingModel.value = false
+            watchEffect(() => {
+                if(!isLoading.value) {
+                    play()
+                    const patchesEl = document.querySelectorAll('.patch')
+                    for (const div of patchesEl) {
+                        div.children[0].children[0].style.transform = 'fill 1s ease'
+                        div.children[0].children[0].style.fill = '#111827'
+                    }
+                }
+            })
         })
 
 

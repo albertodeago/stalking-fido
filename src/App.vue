@@ -6,15 +6,21 @@
                 <component :is="Component" />
             </transition>
         </router-view>
+
+        <CookieBanner />
     </main>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
 import { initScreen, screen } from '/@/shared/useScreen'
+import CookieBanner from '/@/CookieBanner.vue'
 
 export default defineComponent({
     name: "App",
+    components: {
+        CookieBanner
+    },
     setup() {
         const image = ref<HTMLImageElement>(null)
         const background = ref<HTMLElement>(null)
