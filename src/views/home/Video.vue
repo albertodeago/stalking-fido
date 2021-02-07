@@ -89,7 +89,8 @@ export default defineComponent({
         const isStreamPlaying = ref<boolean>(false)
         const selectedImage = ref<string>(null)
         let intervalId = null
-console.log(isCookiesAccepted)
+        let intialized = false
+
         onMounted(() => {
             container.value.style.minHeight = `${screen.height}px`
         })
@@ -177,7 +178,8 @@ console.log(isCookiesAccepted)
         init().then(() => {
             isLoadingModel.value = false
             watchEffect(() => {
-                if(!isLoading.value) {
+                if(!isLoading.value && !intialized) {
+                    intialized = true
                     play()
                     const patchesEl = document.querySelectorAll('.patch')
                     for (const div of patchesEl) {
