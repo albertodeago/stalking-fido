@@ -6,6 +6,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Toast, { POSITION } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
+// setup service worker
+if('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js');
+};
+
 let app = createApp(App)
     .use(Toast, { 
         position: POSITION.BOTTOM_CENTER,
